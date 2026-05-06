@@ -19,25 +19,13 @@
       --text3: #555570;
       --accent: #6c63ff;
       --accent2: #9d96ff;
-      --shadow: 0 4px 24px rgba(0,0,0,0.5);
-      --radius: 10px;
-      --openai: #10a37f;
-      --anthropic: #d4652a;
-      --gemini: #4285f4;
-      --ollama: #7c3aed;
-      --grok: #1d9bf0;
+      --shadow: 0 4px 24px rgba(0,0,0,.5);
     }
     .light {
-      --bg: #f0f0f5;
-      --bg2: #ffffff;
-      --bg3: #f5f5fa;
-      --bg4: #eaeaf2;
-      --border: #d0d0e0;
-      --border2: #b0b0cc;
-      --text: #111122;
-      --text2: #555577;
-      --text3: #9999bb;
-      --shadow: 0 4px 20px rgba(0,0,0,0.12);
+      --bg: #f0f0f5; --bg2: #ffffff; --bg3: #f5f5fa; --bg4: #eaeaf2;
+      --border: #d0d0e0; --border2: #b0b0cc;
+      --text: #111122; --text2: #555577; --text3: #9999bb;
+      --shadow: 0 4px 20px rgba(0,0,0,.12);
     }
 
     body {
@@ -51,41 +39,41 @@
       transition: background .25s, color .25s;
     }
 
-    /* ===== TOPBAR ===== */
+    /* ── TOPBAR ─────────────────────────────── */
     .topbar {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
+      gap: 10px;
+      padding: 8px 14px;
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 100;
+      z-index: 200;
     }
     .logo {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       background: linear-gradient(135deg, #6c63ff, #a855f7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       white-space: nowrap;
+      user-select: none;
     }
-    .topbar-tabs {
+    .tab-strip {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       flex: 1;
       overflow-x: auto;
-      padding: 2px 0;
       scrollbar-width: none;
     }
-    .topbar-tabs::-webkit-scrollbar { display: none; }
+    .tab-strip::-webkit-scrollbar { display: none; }
 
     .ai-tab {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
+      padding: 5px 12px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 13px;
@@ -94,21 +82,31 @@
       background: var(--bg3);
       color: var(--text2);
       white-space: nowrap;
-      transition: all .2s;
+      transition: all .18s;
       user-select: none;
+      flex-shrink: 0;
     }
     .ai-tab:hover { border-color: var(--border2); color: var(--text); }
     .ai-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .ai-tab .tab-close {
-      font-size: 12px;
-      opacity: .6;
-      padding: 0 2px;
-      border-radius: 3px;
+    .tab-status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text3);
+      flex-shrink: 0;
     }
-    .ai-tab .tab-close:hover { opacity: 1; background: rgba(255,255,255,0.2); }
+    .tab-status-dot.logged-in  { background: #22c55e; }
+    .tab-status-dot.loading    { background: #f59e0b; animation: pulse 1s infinite; }
+    .tab-status-dot.blocked    { background: #ef4444; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .tab-close {
+      font-size: 12px; opacity: .55; padding: 0 2px;
+      border-radius: 3px; line-height: 1;
+    }
+    .tab-close:hover { opacity: 1; background: rgba(255,255,255,.18); }
 
     .btn-add-tab {
-      padding: 6px 14px;
+      padding: 5px 13px;
       border-radius: 8px;
       border: 1px dashed var(--border2);
       background: none;
@@ -116,250 +114,194 @@
       cursor: pointer;
       font-size: 13px;
       white-space: nowrap;
-      transition: all .2s;
+      transition: all .18s;
+      flex-shrink: 0;
     }
     .btn-add-tab:hover { border-color: var(--accent); color: var(--accent); }
     .btn-add-tab:disabled { opacity: .4; cursor: not-allowed; }
 
-    .topbar-actions {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .topbar-right { display: flex; gap: 7px; flex-shrink: 0; }
     .btn-icon {
       background: none;
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text2);
       cursor: pointer;
-      padding: 6px 10px;
-      font-size: 14px;
-      transition: all .2s;
+      padding: 5px 10px;
+      font-size: 13px;
+      transition: all .18s;
       white-space: nowrap;
     }
     .btn-icon:hover { border-color: var(--border2); color: var(--text); background: var(--bg3); }
-    .btn-icon.active-btn { border-color: var(--accent); color: var(--accent); }
+    .btn-icon.toggled { border-color: var(--accent); color: var(--accent2); }
 
-    /* ===== GRID ===== */
-    .grid-container {
+    /* ── VIEW AREA ───────────────────────────── */
+    .view-area {
       flex: 1;
-      display: grid;
-      gap: 1px;
-      background: var(--border);
-      overflow: hidden;
-    }
-    .grid-1  { grid-template-columns: 1fr; }
-    .grid-2  { grid-template-columns: 1fr 1fr; }
-    .grid-3  { grid-template-columns: 1fr 1fr 1fr; }
-    .grid-4  { grid-template-columns: 1fr 1fr; }
-    .grid-5  { grid-template-columns: 1fr 1fr 1fr; }
-    .grid-6  { grid-template-columns: 1fr 1fr 1fr; }
-
-    /* ===== AI WINDOW ===== */
-    .ai-window {
-      background: var(--bg2);
       display: flex;
+      overflow: hidden;
+      background: var(--border);
+      gap: 1px;
+    }
+
+    /* Single tab view */
+    .view-area.single .ai-pane { display: flex; }
+
+    /* Grid: visible panes displayed as grid */
+    .ai-pane {
+      flex: 1;
+      background: var(--bg2);
+      display: none;
       flex-direction: column;
+      min-width: 0;
       min-height: 0;
       position: relative;
     }
+    .ai-pane.visible { display: flex; }
 
-    .win-header {
+    /* ── PANE HEADER ─────────────────────────── */
+    .pane-header {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
+      padding: 7px 12px;
       background: var(--bg3);
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-    .win-provider-dot {
-      width: 10px;
-      height: 10px;
+    .pane-dot {
+      width: 10px; height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .win-title {
-      font-size: 13px;
-      font-weight: 600;
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .win-model-select {
-      background: var(--bg4);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
+    .pane-title { font-size: 13px; font-weight: 600; flex: 1; }
+    .pane-status {
       font-size: 11px;
-      padding: 3px 6px;
-      outline: none;
-      cursor: pointer;
-      max-width: 140px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text3);
     }
-    .win-model-select:focus { border-color: var(--accent); }
-    .win-btn {
-      background: none;
+    .pane-status.ok  { border-color: #22c55e44; color: #22c55e; background: #22c55e11; }
+    .pane-status.err { border-color: #ef444444; color: #ef4444; background: #ef444411; }
+    .pane-btn {
+      background: none; border: none;
+      color: var(--text3); cursor: pointer;
+      font-size: 14px; padding: 2px 5px;
+      border-radius: 5px; transition: all .15s;
+    }
+    .pane-btn:hover { color: var(--text); background: var(--bg4); }
+
+    /* ── IFRAME / BLOCKED NOTICE ─────────────── */
+    .pane-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .pane-body iframe {
+      width: 100%; height: 100%;
       border: none;
-      color: var(--text3);
-      cursor: pointer;
-      font-size: 14px;
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: all .2s;
+      background: var(--bg2);
     }
-    .win-btn:hover { color: var(--text); background: var(--bg4); }
 
-    .win-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .win-messages::-webkit-scrollbar { width: 4px; }
-    .win-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-    .empty-win {
-      flex: 1;
+    .blocked-notice {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      color: var(--text3);
-      font-size: 13px;
+      gap: 14px;
+      padding: 24px;
+      text-align: center;
+      background: var(--bg2);
     }
-    .empty-win .e-icon { font-size: 32px; opacity: .5; }
-
-    /* ===== MESSAGES ===== */
-    .msg {
-      display: flex;
-      gap: 8px;
-      animation: msgIn .25s ease;
+    .blocked-icon { font-size: 40px; opacity: .5; }
+    .blocked-notice h3 { font-size: 15px; font-weight: 700; }
+    .blocked-notice p  { font-size: 12px; color: var(--text2); max-width: 300px; line-height: 1.6; }
+    .btn-open-tab {
+      padding: 9px 20px;
+      background: linear-gradient(135deg, #6c63ff, #a855f7);
+      border: none; border-radius: 9px;
+      color: #fff; cursor: pointer;
+      font-size: 13px; font-weight: 600;
+      transition: opacity .18s;
+      display: flex; align-items: center; gap: 7px;
     }
-    @keyframes msgIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .msg.user { flex-direction: row-reverse; }
-    .msg-avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      flex-shrink: 0;
-      font-weight: 700;
-    }
-    .msg-body { max-width: 80%; display: flex; flex-direction: column; gap: 3px; }
-    .msg.user .msg-body { align-items: flex-end; }
-    .msg-bubble {
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.55;
-      word-break: break-word;
-    }
-    .msg.user .msg-bubble {
-      background: var(--accent);
-      color: #fff;
-      border-bottom-right-radius: 3px;
-    }
-    .msg.assistant .msg-bubble {
+    .btn-open-tab:hover { opacity: .88; }
+    .btn-open-tab.secondary {
       background: var(--bg4);
-      border-bottom-left-radius: 3px;
-    }
-    .msg-time { font-size: 10px; color: var(--text3); }
-    .msg-copy {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text3);
-      cursor: pointer;
-      font-size: 10px;
-      padding: 1px 5px;
-    }
-    .msg-copy:hover { color: var(--text); border-color: var(--border2); }
-
-    /* Thinking */
-    .thinking-dots {
-      display: flex;
-      gap: 4px;
-      padding: 8px 12px;
-      background: var(--bg4);
-      border-radius: 10px;
-      border-bottom-left-radius: 3px;
-      width: fit-content;
-    }
-    .thinking-dots span {
-      width: 7px; height: 7px;
-      background: var(--text3);
-      border-radius: 50%;
-      animation: dot 1.2s ease-in-out infinite;
-    }
-    .thinking-dots span:nth-child(2) { animation-delay: .2s; }
-    .thinking-dots span:nth-child(3) { animation-delay: .4s; }
-    @keyframes dot {
-      0%,60%,100% { transform: translateY(0); opacity: .4; }
-      30%          { transform: translateY(-6px); opacity: 1; }
-    }
-
-    /* Win-level send button */
-    .win-footer {
-      padding: 6px 10px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    .win-input {
-      flex: 1;
-      background: var(--bg4);
-      border: 1px solid var(--border);
-      border-radius: 7px;
+      border: 1px solid var(--border2);
       color: var(--text);
-      font-size: 12px;
-      font-family: inherit;
-      outline: none;
-      padding: 5px 8px;
-      resize: none;
-      max-height: 80px;
-      min-height: 28px;
-      line-height: 1.4;
     }
-    .win-input::placeholder { color: var(--text3); }
-    .win-input:focus { border-color: var(--accent); }
-    .win-send {
-      background: var(--accent);
-      border: none;
-      border-radius: 7px;
-      color: #fff;
-      cursor: pointer;
-      padding: 6px 10px;
-      font-size: 13px;
-      transition: opacity .2s;
-      flex-shrink: 0;
-    }
-    .win-send:hover { opacity: .85; }
-    .win-send:disabled { opacity: .4; cursor: not-allowed; }
 
-    /* ===== SHARED INPUT BAR ===== */
+    /* ── SYNC OVERLAY ────────────────────────── */
+    .sync-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(108,99,255,.12);
+      border: 2px solid var(--accent);
+      border-radius: 0;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 10px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .sync-overlay.show { display: flex; animation: syncFlash .5s ease; }
+    @keyframes syncFlash {
+      0%   { background: rgba(108,99,255,.35); }
+      100% { background: rgba(108,99,255,.12); }
+    }
+    .sync-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── SHARED INPUT BAR ────────────────────── */
     .shared-bar {
       background: var(--bg2);
       border-top: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 16px;
       flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
     }
-    .shared-bar-row {
+
+    /* AI checkboxes row */
+    .target-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .target-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+      transition: all .18s;
+      user-select: none;
+    }
+    .target-chip.checked {
+      border-color: var(--accent);
+      background: rgba(108,99,255,.15);
+      color: var(--accent2);
+    }
+    .target-chip input { display: none; }
+
+    /* Input row */
+    .input-row {
       display: flex;
       gap: 10px;
       align-items: flex-end;
@@ -375,237 +317,176 @@
       outline: none;
       padding: 10px 14px;
       resize: none;
-      max-height: 150px;
-      min-height: 44px;
+      max-height: 130px;
+      min-height: 42px;
       line-height: 1.5;
-      transition: border-color .2s;
+      transition: border-color .18s;
     }
     .shared-textarea::placeholder { color: var(--text3); }
     .shared-textarea:focus { border-color: var(--accent); }
+
     .btn-send-all {
       background: linear-gradient(135deg, #6c63ff, #a855f7);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      cursor: pointer;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      border: none; border-radius: 10px;
+      color: #fff; cursor: pointer;
+      padding: 10px 16px;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; gap: 6px;
       flex-shrink: 0;
-      transition: opacity .2s, transform .1s;
+      transition: opacity .18s, transform .1s;
+      white-space: nowrap;
     }
     .btn-send-all:hover { opacity: .9; }
     .btn-send-all:active { transform: scale(.97); }
-    .btn-send-all:disabled { opacity: .4; cursor: not-allowed; }
-    .shared-info {
-      font-size: 11px;
-      color: var(--text3);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .active-count {
-      color: var(--accent2);
-      font-weight: 600;
-    }
 
-    /* ===== MODALS ===== */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      animation: fadeO .2s ease;
+    .shared-hint {
+      font-size: 11px; color: var(--text3);
+      margin-top: 6px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     }
-    @keyframes fadeO { from { opacity: 0; } to { opacity: 1; } }
+    .hint-ok { color: #22c55e; font-weight: 600; }
+
+    /* ── MODALS ──────────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
     .modal {
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
-      width: 460px;
-      max-width: 92vw;
-      max-height: 88vh;
-      overflow-y: auto;
-      animation: slideUp .25s ease;
+      width: 480px; max-width: 93vw;
+      max-height: 88vh; overflow-y: auto;
+      animation: slideUp .22s ease;
     }
     @keyframes slideUp {
-      from { transform: translateY(16px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
+      from { transform: translateY(14px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
     }
-    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-    .modal-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-    .form-label { font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; display: block; }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: 11px; font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 7px;
+    }
     .form-group { margin-bottom: 16px; }
     .form-input {
       width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-      padding: 9px 12px;
-      transition: border-color .2s;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-size: 14px; font-family: inherit;
+      outline: none; padding: 9px 12px;
+      transition: border-color .18s;
     }
     .form-input:focus { border-color: var(--accent); }
-    .form-select {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      padding: 9px 12px;
-      cursor: pointer;
-    }
-    .form-select:focus { border-color: var(--accent); }
-    .form-textarea {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      padding: 9px 12px;
-      resize: vertical;
-      min-height: 70px;
-      transition: border-color .2s;
-    }
-    .form-textarea:focus { border-color: var(--accent); }
 
-    .provider-grid {
+    /* AI service picker grid */
+    .service-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-bottom: 16px;
     }
-    .p-option {
-      padding: 12px 8px;
+    .svc-card {
+      padding: 14px 8px;
       border: 2px solid var(--border);
-      border-radius: 10px;
+      border-radius: 11px;
       cursor: pointer;
       text-align: center;
-      transition: all .2s;
+      transition: all .18s;
     }
-    .p-option:hover { border-color: var(--border2); background: var(--bg3); }
-    .p-option.sel { border-color: var(--accent); background: rgba(108,99,255,.12); }
-    .p-option .p-icon { font-size: 22px; }
-    .p-option .p-name { font-size: 12px; font-weight: 600; margin-top: 4px; }
-    .p-option .p-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+    .svc-card:hover { border-color: var(--border2); background: var(--bg3); }
+    .svc-card.sel { border-color: var(--accent); background: rgba(108,99,255,.13); }
+    .svc-icon { font-size: 26px; }
+    .svc-name { font-size: 12px; font-weight: 700; margin-top: 5px; }
+    .svc-url  { font-size: 10px; color: var(--text3); margin-top: 2px; }
 
     .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
     .btn-cancel {
-      flex: 1;
-      padding: 10px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      cursor: pointer;
-      font-size: 14px;
-      transition: background .2s;
+      flex: 1; padding: 10px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      cursor: pointer; font-size: 14px;
     }
-    .btn-cancel:hover { background: var(--bg4); }
     .btn-confirm {
-      flex: 2;
-      padding: 10px;
+      flex: 2; padding: 10px;
       background: linear-gradient(135deg, #6c63ff, #a855f7);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      transition: opacity .2s;
+      border: none; border-radius: 8px;
+      color: #fff; cursor: pointer;
+      font-size: 14px; font-weight: 700;
     }
-    .btn-confirm:hover { opacity: .9; }
 
-    .api-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* ── SETTINGS ────────────────────────────── */
+    .settings-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
       background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
-      margin-bottom: 8px;
+      border-radius: 8px; margin-bottom: 8px;
     }
-    .api-row input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-size: 13px;
-      font-family: monospace;
-    }
-    .api-row .api-label { font-size: 12px; color: var(--text2); width: 72px; flex-shrink: 0; font-weight: 500; }
+    .settings-row span { font-size: 13px; }
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
 
-    .divider { height: 1px; background: var(--border); margin: 16px 0; }
-
-    /* Toast */
+    /* ── TOAST ───────────────────────────────── */
     .toast {
       position: fixed;
-      bottom: 80px;
-      right: 20px;
+      bottom: 90px; right: 18px;
       padding: 10px 16px;
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 10px;
       font-size: 13px;
       box-shadow: var(--shadow);
-      z-index: 2000;
-      animation: toastIn .3s ease;
-      max-width: 300px;
+      z-index: 3000;
+      animation: tIn .28s ease;
+      max-width: 320px;
+      line-height: 1.4;
     }
-    @keyframes toastIn {
-      from { transform: translateX(80px); opacity: 0; }
-      to   { transform: translateX(0); opacity: 1; }
+    @keyframes tIn {
+      from { transform: translateX(70px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
     }
-    .toast.ok  { border-left: 3px solid #10b981; }
+    .toast.ok  { border-left: 3px solid #22c55e; }
     .toast.err { border-left: 3px solid #ef4444; }
+    .toast.info{ border-left: 3px solid var(--accent); }
 
-    /* Markdown */
-    .msg-bubble pre {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px;
-      overflow-x: auto;
-      margin: 6px 0;
-      font-size: 12px;
+    /* ── CLIPBOARD BANNER ────────────────────── */
+    .clipboard-banner {
+      display: none;
+      position: fixed;
+      top: 56px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px; font-weight: 600;
+      padding: 9px 20px;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      z-index: 500;
+      white-space: nowrap;
+      animation: bannerIn .3s ease;
     }
-    .msg-bubble code { font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; }
-    .msg-bubble p code { background: rgba(0,0,0,.25); padding: 1px 5px; border-radius: 3px; }
-    .msg-bubble ul, .msg-bubble ol { padding-left: 18px; margin: 4px 0; }
-    .msg-bubble p { margin: 3px 0; }
-    .msg-bubble h1 { font-size: 16px; margin: 8px 0 4px; }
-    .msg-bubble h2 { font-size: 14px; margin: 6px 0 4px; }
-    .msg-bubble h3 { font-size: 13px; margin: 5px 0 3px; }
-    .msg-bubble strong { font-weight: 700; }
-    .msg-bubble em { font-style: italic; }
-    .msg-bubble table { border-collapse: collapse; font-size: 12px; margin: 6px 0; }
-    .msg-bubble th, .msg-bubble td { border: 1px solid var(--border2); padding: 4px 8px; }
-    .msg-bubble th { background: var(--bg); font-weight: 600; }
-
-    /* Error state */
-    .msg-error .msg-bubble { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+    .clipboard-banner.show { display: block; }
+    @keyframes bannerIn {
+      from { transform: translateX(-50%) translateY(-8px); opacity: 0; }
+      to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+    }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* Help link */
+    .help-link {
+      font-size: 11px; color: var(--text3);
+      text-decoration: underline; cursor: pointer;
+    }
+    .help-link:hover { color: var(--text2); }
   </style>
 </head>
 <body>
@@ -613,96 +494,71 @@
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">⚡ AI Hub</div>
-  <div class="topbar-tabs" id="tabsRow"></div>
+  <div class="tab-strip" id="tabStrip"></div>
   <button class="btn-add-tab" id="btnAddTab" onclick="openAddModal()">＋ AI追加</button>
-  <div class="topbar-actions">
-    <button class="btn-icon" onclick="openSettings()">⚙️ 設定</button>
-    <button class="btn-icon" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  <div class="topbar-right">
+    <button class="btn-icon" id="btnGrid" onclick="toggleGridView()" title="グリッド/タブ切替">⊞ グリッド</button>
+    <button class="btn-icon" onclick="openSettings()">⚙️</button>
+    <button class="btn-icon" id="btnTheme" onclick="toggleTheme()">🌙</button>
   </div>
 </div>
 
-<!-- GRID -->
-<div class="grid-container" id="gridContainer"></div>
+<!-- CLIPBOARD BANNER -->
+<div class="clipboard-banner" id="clipBanner">
+  📋 テキストをコピーしました — 各AIタブで Ctrl+V (⌘+V) で貼り付けてください
+</div>
 
-<!-- SHARED INPUT -->
+<!-- VIEW AREA -->
+<div class="view-area" id="viewArea">
+  <div style="margin:auto;text-align:center;color:var(--text3);padding:40px 20px;">
+    <div style="font-size:48px;opacity:.25;margin-bottom:16px;">🤖</div>
+    <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px;">AIウィンドウを追加してください</div>
+    <div style="font-size:13px;">「＋ AI追加」からChatGPT・Gemini・Claudeなどを追加できます</div>
+  </div>
+</div>
+
+<!-- SHARED INPUT BAR -->
 <div class="shared-bar">
-  <div class="shared-bar-row">
+  <div class="target-row" id="targetRow">
+    <span style="font-size:12px;color:var(--text3);align-self:center;">送信先：</span>
+  </div>
+  <div class="input-row">
     <textarea
       class="shared-textarea"
       id="sharedInput"
-      placeholder="全AIに同時送信するメッセージ (Shift+Enter で改行, Enter で送信)"
+      placeholder="全AIに送信するメッセージを入力 (Enter で送信、Shift+Enter で改行)"
       rows="1"
       oninput="autoResize(this)"
       onkeydown="sharedKeyDown(event)"
     ></textarea>
-    <button class="btn-send-all" id="btnSendAll" onclick="sendToAll()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <button class="btn-send-all" onclick="sendToAll()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"/>
       </svg>
       全AIに送信
     </button>
   </div>
-  <div class="shared-info">
-    <span>アクティブウィンドウ: <span class="active-count" id="winCount">0</span> / 6</span>
+  <div class="shared-hint">
+    <span>アクティブ: <strong id="activeCount" style="color:var(--accent2)">0</strong> / 6 ウィンドウ</span>
     <span>•</span>
-    <span>個別送信は各ウィンドウ下部の入力欄を使用</span>
+    <span>テキストをクリップボードにコピーし、各AIに自動入力を試みます</span>
+    <span class="help-link" onclick="openHelp()">使い方</span>
   </div>
 </div>
 
 <!-- ADD MODAL -->
 <div class="overlay" id="addModal" style="display:none" onclick="overlayClose(event,'addModal')">
   <div class="modal">
-    <h2>🤖 AIウィンドウを追加</h2>
-    <div class="form-group">
-      <label class="form-label">プロバイダー</label>
-      <div class="provider-grid">
-        <div class="p-option" id="po-openai" onclick="pickProvider('openai')">
-          <div class="p-icon">🟢</div>
-          <div class="p-name">OpenAI</div>
-          <div class="p-sub">GPT-4o</div>
-        </div>
-        <div class="p-option" id="po-anthropic" onclick="pickProvider('anthropic')">
-          <div class="p-icon">🟠</div>
-          <div class="p-name">Anthropic</div>
-          <div class="p-sub">Claude</div>
-        </div>
-        <div class="p-option" id="po-gemini" onclick="pickProvider('gemini')">
-          <div class="p-icon">🔵</div>
-          <div class="p-name">Gemini</div>
-          <div class="p-sub">Gemini 2.0</div>
-        </div>
-        <div class="p-option" id="po-ollama" onclick="pickProvider('ollama')">
-          <div class="p-icon">🟣</div>
-          <div class="p-name">Ollama</div>
-          <div class="p-sub">ローカル</div>
-        </div>
-        <div class="p-option" id="po-grok" onclick="pickProvider('grok')">
-          <div class="p-icon">🔷</div>
-          <div class="p-name">Grok</div>
-          <div class="p-sub">xAI</div>
-        </div>
-        <div class="p-option" id="po-openai_compat" onclick="pickProvider('openai_compat')">
-          <div class="p-icon">⚙️</div>
-          <div class="p-name">カスタム</div>
-          <div class="p-sub">OpenAI互換</div>
-        </div>
-      </div>
+    <h2>🤖 AIサービスを追加</h2>
+    <label class="form-label">サービスを選択</label>
+    <div class="service-grid" id="serviceGrid"></div>
+    <div class="form-group" id="customUrlGroup" style="display:none">
+      <label class="form-label">カスタムURL</label>
+      <input type="text" class="form-input" id="customUrl" placeholder="https://example.com/chat">
     </div>
-    <div class="form-group" id="modelGroup" style="display:none">
-      <label class="form-label">モデル</label>
-      <select class="form-select" id="modalModel"></select>
-    </div>
-    <div class="form-group" id="customEndpointGroup" style="display:none">
-      <label class="form-label">エンドポイントURL</label>
-      <input type="text" class="form-input" id="customEndpoint" placeholder="http://localhost:11434">
-    </div>
-    <div class="form-group" id="sysPromptGroup" style="display:none">
-      <label class="form-label">システムプロンプト（任意）</label>
-      <textarea class="form-textarea" id="modalSysPrompt" placeholder="AIの役割を設定..."></textarea>
-    </div>
-    <div class="form-group" id="winNameGroup" style="display:none">
-      <label class="form-label">ウィンドウ名</label>
-      <input type="text" class="form-input" id="modalWinName" placeholder="例: コード質問">
+    <div class="form-group" id="customNameGroup" style="display:none">
+      <label class="form-label">表示名</label>
+      <input type="text" class="form-input" id="customName" placeholder="マイAI">
     </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal('addModal')">キャンセル</button>
@@ -713,732 +569,671 @@
 
 <!-- SETTINGS MODAL -->
 <div class="overlay" id="settingsModal" style="display:none" onclick="overlayClose(event,'settingsModal')">
-  <div class="modal" style="width:500px">
+  <div class="modal">
     <h2>⚙️ 設定</h2>
-    <label class="form-label">API キー</label>
-    <div class="api-row">
-      <span class="api-label">🟢 OpenAI</span>
-      <input type="password" id="key-openai" placeholder="sk-..." oninput="saveKey('openai',this.value)">
-      <button class="win-btn" onclick="togglePwd('key-openai')">👁</button>
+    <label class="form-label">表示モード</label>
+    <div class="settings-row">
+      <span>グリッド表示（複数AI同時表示）</span>
+      <button class="btn-icon" id="gridToggleBtn" onclick="toggleGridView()">オン</button>
     </div>
-    <div class="api-row">
-      <span class="api-label">🟠 Anthropic</span>
-      <input type="password" id="key-anthropic" placeholder="sk-ant-..." oninput="saveKey('anthropic',this.value)">
-      <button class="win-btn" onclick="togglePwd('key-anthropic')">👁</button>
-    </div>
-    <div class="api-row">
-      <span class="api-label">🔵 Gemini</span>
-      <input type="password" id="key-gemini" placeholder="AIza..." oninput="saveKey('gemini',this.value)">
-      <button class="win-btn" onclick="togglePwd('key-gemini')">👁</button>
-    </div>
-    <div class="api-row">
-      <span class="api-label">🔷 Grok</span>
-      <input type="password" id="key-grok" placeholder="xai-..." oninput="saveKey('grok',this.value)">
-      <button class="win-btn" onclick="togglePwd('key-grok')">👁</button>
+    <div class="settings-row">
+      <span>ダークモード</span>
+      <button class="btn-icon" id="themeToggleBtn" onclick="toggleTheme()">🌙 Dark</button>
     </div>
     <div class="divider"></div>
-    <label class="form-label">外観</label>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:16px;">
-      <span style="font-size:13px;">ダークモード</span>
-      <button class="btn-icon" onclick="toggleTheme()" id="themeToggleBtn">🌙 Dark</button>
-    </div>
-    <div class="divider"></div>
-    <label class="form-label">データ管理</label>
+    <label class="form-label">データ</label>
     <div style="display:flex;gap:8px;">
-      <button class="btn-cancel" style="flex:1;font-size:12px;padding:8px;" onclick="exportAll()">📤 エクスポート</button>
-      <button class="btn-cancel" style="flex:1;font-size:12px;padding:8px;" onclick="importData()">📥 インポート</button>
-      <button class="btn-cancel" style="flex:1;font-size:12px;padding:8px;color:#f87171;" onclick="clearAll()">🗑️ 全消去</button>
+      <button class="btn-cancel" onclick="exportData()" style="font-size:12px;padding:8px;">📤 エクスポート</button>
+      <button class="btn-cancel" onclick="importData()" style="font-size:12px;padding:8px;">📥 インポート</button>
+      <button class="btn-cancel" onclick="clearAll()" style="font-size:12px;padding:8px;color:#f87171;">🗑️ 全消去</button>
+    </div>
+    <div class="divider"></div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;">
+      <strong>iframeについて</strong><br>
+      ChatGPT・Claude・GeminiなどはX-Frame-Optionsによりiframe埋め込みをブロックしています。
+      「新しいタブで開く」ボタンでサービスを開き、ログイン後に共有入力欄からテキストをコピーして利用してください。
+    </div>
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div class="overlay" id="helpModal" style="display:none" onclick="overlayClose(event,'helpModal')">
+  <div class="modal">
+    <h2>📖 使い方</h2>
+    <div style="font-size:13px;line-height:1.9;color:var(--text2);">
+      <p style="margin-bottom:12px;color:var(--text);font-weight:600;">① AIウィンドウを追加</p>
+      <p>「＋ AI追加」ボタンをクリックし、ChatGPT・Gemini・Claudeなどを追加します（最大6個）。</p>
+      <div class="divider"></div>
+      <p style="margin-bottom:12px;color:var(--text);font-weight:600;">② 各AIにログイン</p>
+      <p>各パネルの「🔗 新しいタブで開く」ボタンをクリックしてAIサービスを開き、自分のアカウントでログインしてください。<br>
+      ※ ChatGPT・Claude・GeminiはX-Frame-Options設定のためiframe内に直接表示できません。</p>
+      <div class="divider"></div>
+      <p style="margin-bottom:12px;color:var(--text);font-weight:600;">③ 質問を入力して一括送信</p>
+      <p>下部の共有入力欄に質問を入力し「全AIに送信」をクリックすると：</p>
+      <ul style="padding-left:18px;margin-top:6px;gap:4px;display:flex;flex-direction:column;">
+        <li>テキストがクリップボードにコピーされます</li>
+        <li>選択中のAIタブが一括で開きます</li>
+        <li>各タブで <kbd style="background:var(--bg4);padding:1px 6px;border-radius:4px;font-family:monospace;">Ctrl+V</kbd> (Mac: ⌘+V) で貼り付け → 送信してください</li>
+      </ul>
+      <div class="divider"></div>
+      <p style="color:var(--text);font-weight:600;">💡 ヒント</p>
+      <p>グリッド表示モードでは最大6つのパネルを同時表示できます。URLクエリパラメータ対応のサービス（Perplexityなど）では自動入力も機能します。</p>
+    </div>
+    <div style="margin-top:18px;">
+      <button class="btn-confirm" onclick="closeModal('helpModal')" style="width:100%;">閉じる</button>
     </div>
   </div>
 </div>
 
 <script>
-// =========================================================
+// ─────────────────────────────────────────────
+// BUILT-IN AI SERVICES
+// ─────────────────────────────────────────────
+const SERVICES = [
+  {
+    id: 'chatgpt',
+    name: 'ChatGPT',
+    icon: '🟢',
+    color: '#10a37f',
+    url: 'https://chatgpt.com',
+    queryParam: null,
+    blocked: true,
+    loginNote: 'Googleまたはメールアカウントでログイン',
+  },
+  {
+    id: 'claude',
+    name: 'Claude',
+    icon: '🟠',
+    color: '#d4652a',
+    url: 'https://claude.ai',
+    queryParam: null,
+    blocked: true,
+    loginNote: 'Anthropicアカウントでログイン',
+  },
+  {
+    id: 'gemini',
+    name: 'Gemini',
+    icon: '🔵',
+    color: '#4285f4',
+    url: 'https://gemini.google.com/app',
+    queryParam: null,
+    blocked: true,
+    loginNote: 'Googleアカウントでログイン',
+  },
+  {
+    id: 'perplexity',
+    name: 'Perplexity',
+    icon: '🔮',
+    color: '#20b2aa',
+    url: 'https://www.perplexity.ai',
+    queryParam: 'q',
+    blocked: false,
+    loginNote: 'ログイン不要（またはアカウントでログイン）',
+  },
+  {
+    id: 'grok',
+    name: 'Grok',
+    icon: '🔷',
+    color: '#1d9bf0',
+    url: 'https://grok.com',
+    queryParam: null,
+    blocked: true,
+    loginNote: 'X (Twitter) アカウントでログイン',
+  },
+  {
+    id: 'copilot',
+    name: 'Copilot',
+    icon: '🪟',
+    color: '#0078d4',
+    url: 'https://copilot.microsoft.com',
+    queryParam: null,
+    blocked: false,
+    loginNote: 'Microsoftアカウントでログイン（任意）',
+  },
+  {
+    id: 'custom',
+    name: 'カスタム',
+    icon: '⚙️',
+    color: '#888',
+    url: '',
+    queryParam: null,
+    blocked: false,
+    loginNote: '',
+  },
+];
+
+// ─────────────────────────────────────────────
 // STATE
-// =========================================================
-const MAX_WINDOWS = 6;
-
-const MODELS = {
-  openai: [
-    { id:'gpt-4o',          label:'GPT-4o' },
-    { id:'gpt-4o-mini',     label:'GPT-4o Mini' },
-    { id:'gpt-4-turbo',     label:'GPT-4 Turbo' },
-    { id:'o1-preview',      label:'o1 Preview' },
-    { id:'o1-mini',         label:'o1 Mini' },
-    { id:'gpt-3.5-turbo',   label:'GPT-3.5 Turbo' },
-  ],
-  anthropic: [
-    { id:'claude-opus-4-7',              label:'Claude Opus 4.7' },
-    { id:'claude-sonnet-4-6',            label:'Claude Sonnet 4.6' },
-    { id:'claude-haiku-4-5-20251001',    label:'Claude Haiku 4.5' },
-    { id:'claude-3-5-sonnet-20241022',   label:'Claude 3.5 Sonnet' },
-    { id:'claude-3-5-haiku-20241022',    label:'Claude 3.5 Haiku' },
-    { id:'claude-3-opus-20240229',       label:'Claude 3 Opus' },
-  ],
-  gemini: [
-    { id:'gemini-2.0-flash',             label:'Gemini 2.0 Flash' },
-    { id:'gemini-2.0-flash-thinking-exp',label:'Gemini 2.0 Flash Thinking' },
-    { id:'gemini-1.5-pro',               label:'Gemini 1.5 Pro' },
-    { id:'gemini-1.5-flash',             label:'Gemini 1.5 Flash' },
-    { id:'gemini-1.5-flash-8b',          label:'Gemini 1.5 Flash-8B' },
-  ],
-  ollama: [],
-  grok: [
-    { id:'grok-3',          label:'Grok 3' },
-    { id:'grok-3-mini',     label:'Grok 3 Mini' },
-    { id:'grok-2',          label:'Grok 2' },
-  ],
-  openai_compat: [
-    { id:'custom',          label:'カスタム (手動入力)' },
-  ],
-};
-
-const PINFO = {
-  openai:       { emoji:'🟢', color:'#10a37f', name:'OpenAI' },
-  anthropic:    { emoji:'🟠', color:'#d4652a', name:'Anthropic' },
-  gemini:       { emoji:'🔵', color:'#4285f4', name:'Gemini' },
-  ollama:       { emoji:'🟣', color:'#7c3aed', name:'Ollama' },
-  grok:         { emoji:'🔷', color:'#1d9bf0', name:'Grok' },
-  openai_compat:{ emoji:'⚙️', color:'#888',    name:'カスタム' },
-};
-
+// ─────────────────────────────────────────────
+const MAX_WIN = 6;
 let state = {
-  windows: [],       // { id, provider, model, name, systemPrompt, messages, endpoint }
+  windows: [],   // { id, serviceId, name, icon, color, url, queryParam, blocked, checked, loginStatus }
+  gridMode: true,
   theme: 'dark',
-  keys: { openai:'', anthropic:'', gemini:'', grok:'' },
+  activeTab: null,
 };
 
-let pendingProvider = null;
-let busy = {};  // windowId => bool
-
-// =========================================================
-// INIT
-// =========================================================
 (function init() {
-  const saved = localStorage.getItem('aihub-v2');
-  if (saved) {
+  const raw = localStorage.getItem('aihub-v3');
+  if (raw) {
     try {
-      const p = JSON.parse(saved);
-      state.windows  = p.windows  || [];
-      state.theme    = p.theme    || 'dark';
-      state.keys     = { ...state.keys, ...(p.keys || {}) };
+      const p = JSON.parse(raw);
+      Object.assign(state, p);
     } catch(e) {}
   }
+  buildServiceGrid();
   applyTheme();
   render();
-  fetchOllamaModels();
 })();
 
 function save() {
-  localStorage.setItem('aihub-v2', JSON.stringify(state));
+  localStorage.setItem('aihub-v3', JSON.stringify(state));
 }
 
-// =========================================================
+// ─────────────────────────────────────────────
 // THEME
-// =========================================================
+// ─────────────────────────────────────────────
 function applyTheme() {
   document.body.classList.toggle('light', state.theme === 'light');
-  const isDark = state.theme === 'dark';
-  const themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) themeBtn.textContent = isDark ? '🌙' : '☀️';
-  const ttb = document.getElementById('themeToggleBtn');
-  if (ttb) ttb.textContent = isDark ? '🌙 Dark' : '☀️ Light';
+  const dark = state.theme === 'dark';
+  el('btnTheme').textContent = dark ? '🌙' : '☀️';
+  const ttb = el('themeToggleBtn');
+  if (ttb) ttb.textContent = dark ? '🌙 Dark' : '☀️ Light';
 }
 function toggleTheme() {
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  applyTheme();
-  save();
+  applyTheme(); save();
 }
 
-// =========================================================
+// ─────────────────────────────────────────────
+// GRID / SINGLE VIEW
+// ─────────────────────────────────────────────
+function toggleGridView() {
+  state.gridMode = !state.gridMode;
+  el('btnGrid').classList.toggle('toggled', state.gridMode);
+  el('btnGrid').textContent = state.gridMode ? '⊞ グリッド' : '☰ タブ';
+  const gtb = el('gridToggleBtn');
+  if (gtb) gtb.textContent = state.gridMode ? 'オン' : 'オフ';
+  render(); save();
+}
+
+// ─────────────────────────────────────────────
 // RENDER
-// =========================================================
+// ─────────────────────────────────────────────
 function render() {
   renderTabs();
-  renderGrid();
-  updateWinCount();
+  renderPanes();
+  renderTargetRow();
+  el('activeCount').textContent = state.windows.length;
+  el('btnAddTab').disabled = state.windows.length >= MAX_WIN;
+  el('btnGrid').classList.toggle('toggled', state.gridMode);
 }
 
 function renderTabs() {
-  const row = document.getElementById('tabsRow');
-  row.innerHTML = state.windows.map(w => {
-    const info = PINFO[w.provider];
-    return `<div class="ai-tab" id="tab-${w.id}">
-      <span>${info.emoji}</span>
-      <span>${esc(w.name)}</span>
-      <span class="tab-close" onclick="removeWindow('${w.id}')">✕</span>
+  el('tabStrip').innerHTML = state.windows.map(w => {
+    const dotClass = w.loginStatus === 'logged-in' ? 'logged-in'
+                   : w.loginStatus === 'loading'   ? 'loading'
+                   : w.blocked                     ? 'blocked' : '';
+    return `<div class="ai-tab ${w.id === state.activeTab ? 'active' : ''}" onclick="switchTab('${w.id}')">
+      <span class="tab-status-dot ${dotClass}"></span>
+      <span>${w.icon} ${esc(w.name)}</span>
+      <span class="tab-close" onclick="event.stopPropagation();removeWindow('${w.id}')">✕</span>
     </div>`;
   }).join('');
-
-  const addBtn = document.getElementById('btnAddTab');
-  addBtn.disabled = state.windows.length >= MAX_WINDOWS;
-  addBtn.title = state.windows.length >= MAX_WINDOWS ? '最大6ウィンドウです' : '';
 }
 
-function renderGrid() {
-  const gc = document.getElementById('gridContainer');
-  const n = state.windows.length;
-  gc.className = `grid-container grid-${n}`;
+function renderPanes() {
+  const va = el('viewArea');
 
-  if (n === 0) {
-    gc.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text3);font-size:15px;grid-column:1/-1;">
-      <div style="font-size:48px;opacity:.3;">🤖</div>
-      <div style="font-weight:600;font-size:16px;color:var(--text2)">AIウィンドウを追加してください</div>
-      <div>「＋ AI追加」ボタンから複数のAIをセットアップできます</div>
+  if (state.windows.length === 0) {
+    va.innerHTML = `<div style="margin:auto;text-align:center;color:var(--text3);padding:40px 20px;">
+      <div style="font-size:48px;opacity:.25;margin-bottom:16px;">🤖</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px;">AIウィンドウを追加してください</div>
+      <div style="font-size:13px;">「＋ AI追加」からChatGPT・Gemini・Claudeなどを追加できます</div>
     </div>`;
     return;
   }
 
-  gc.innerHTML = state.windows.map(w => buildWindow(w)).join('');
+  const n = state.windows.length;
+  va.style.display = 'flex';
+  va.style.flexWrap = state.gridMode ? 'wrap' : 'nowrap';
+
+  // Determine which panes are visible
+  const visible = state.gridMode
+    ? state.windows.map(w => w.id)
+    : [state.activeTab || state.windows[0]?.id];
+
+  // Preserve existing panes if possible, rebuild otherwise
+  const existing = new Set([...va.querySelectorAll('.ai-pane')].map(el => el.dataset.wid));
+  const needed   = new Set(state.windows.map(w => w.id));
+
+  // Remove stale panes
+  va.querySelectorAll('.ai-pane').forEach(pane => {
+    if (!needed.has(pane.dataset.wid)) pane.remove();
+  });
+
+  // Add new panes (avoid re-creating iframes for existing ones)
+  state.windows.forEach(w => {
+    if (!existing.has(w.id)) {
+      va.appendChild(buildPane(w));
+    }
+  });
+
+  // Update visibility + order
+  state.windows.forEach((w, i) => {
+    const pane = va.querySelector(`[data-wid="${w.id}"]`);
+    if (!pane) return;
+    pane.classList.toggle('visible', visible.includes(w.id));
+
+    // sizing for grid
+    if (state.gridMode) {
+      const cols = n <= 1 ? 1 : n <= 2 ? 2 : 3;
+      const colsPct = 100 / cols;
+      const rows = Math.ceil(n / cols);
+      pane.style.flexBasis = `calc(${colsPct}% - 1px)`;
+      pane.style.maxWidth  = `calc(${colsPct}% - 1px)`;
+      pane.style.height    = `calc(${100 / rows}% - 1px)`;
+    } else {
+      pane.style.flexBasis = '100%';
+      pane.style.maxWidth  = '100%';
+      pane.style.height    = '100%';
+    }
+
+    // reorder
+    pane.style.order = i;
+    updatePaneHeader(w);
+  });
 }
 
-function buildWindow(w) {
-  const info = PINFO[w.provider];
-  const models = MODELS[w.provider];
-
-  const modelOpts = models.length
-    ? models.map(m => `<option value="${m.id}" ${m.id===w.model?'selected':''}>${m.label}</option>`).join('')
-    : `<option value="${w.model}">${w.model}</option>`;
-
-  const msgs = w.messages.length === 0
-    ? `<div class="empty-win"><div class="e-icon">${info.emoji}</div><div>${info.name} · ${w.model}</div><div style="font-size:11px">メッセージを送信</div></div>`
-    : w.messages.map(m => buildMsg(m, w)).join('');
-
-  return `<div class="ai-window" id="win-${w.id}">
-    <div class="win-header">
-      <div class="win-provider-dot" style="background:${info.color}"></div>
-      <div class="win-title">${esc(w.name)}</div>
-      <select class="win-model-select" onchange="changeModel('${w.id}',this.value)">${modelOpts}</select>
-      <button class="win-btn" title="クリア" onclick="clearWindow('${w.id}')">🧹</button>
-      <button class="win-btn" title="エクスポート" onclick="exportWindow('${w.id}')">📤</button>
-      <button class="win-btn" title="閉じる" onclick="removeWindow('${w.id}')">✕</button>
+function buildPane(w) {
+  const pane = document.createElement('div');
+  pane.className = 'ai-pane';
+  pane.dataset.wid = w.id;
+  pane.innerHTML = `
+    <div class="pane-header">
+      <div class="pane-dot" style="background:${w.color}"></div>
+      <div class="pane-title">${w.icon} ${esc(w.name)}</div>
+      <div class="pane-status" id="pstatus-${w.id}">未ログイン</div>
+      <button class="pane-btn" title="ログイン済みとしてマーク" onclick="markLoggedIn('${w.id}')">✅ ログイン済</button>
+      <button class="pane-btn" title="新しいタブで開く" onclick="openInTab('${w.id}')">🔗 開く</button>
+      <button class="pane-btn" title="閉じる" onclick="removeWindow('${w.id}')">✕</button>
     </div>
-    <div class="win-messages" id="msgs-${w.id}">${msgs}</div>
-    <div class="win-footer">
-      <textarea class="win-input" id="winput-${w.id}" rows="1"
-        placeholder="個別送信..."
-        onkeydown="winKeyDown(event,'${w.id}')"
-        oninput="autoResize(this)"></textarea>
-      <button class="win-send" id="wsend-${w.id}" onclick="sendToWindow('${w.id}')">送信</button>
-    </div>
-  </div>`;
-}
-
-function buildMsg(m, w) {
-  const info = PINFO[w.provider];
-  const isUser = m.role === 'user';
-  const time = new Date(m.ts).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-  const content = isUser ? esc(m.content).replace(/\n/g,'<br>') : mdToHtml(m.content);
-  const errClass = m.error ? ' msg-error' : '';
-
-  return `<div class="msg ${isUser?'user':'assistant'}${errClass}">
-    <div class="msg-avatar ${isUser?'':''}` +
-      (isUser
-        ? `" style="background:linear-gradient(135deg,#6c63ff,#a855f7);color:#fff">You`
-        : `" style="background:${info.color}22">${info.emoji}`) +
-    `</div>
-    <div class="msg-body">
-      <div class="msg-bubble">${content}</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="msg-time">${time}</span>
-        ${!isUser?`<button class="msg-copy" onclick="copyMsg('${w.id}','${m.id}')">コピー</button>`:''}
+    <div class="pane-body" id="pbody-${w.id}">
+      ${buildPaneBody(w)}
+      <div class="sync-overlay" id="sync-${w.id}">
+        <span class="sync-badge">📋 コピー済み</span>
       </div>
-    </div>
+    </div>`;
+  return pane;
+}
+
+function buildPaneBody(w) {
+  if (!w.blocked && w.url) {
+    // Attempt iframe (works for Perplexity, Copilot, etc.)
+    return `<iframe
+      src="${esc(w.url)}"
+      id="iframe-${w.id}"
+      allow="clipboard-read; clipboard-write"
+      onload="iframeLoaded('${w.id}')"
+      onerror="iframeError('${w.id}')"
+      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+    ></iframe>`;
+  }
+  // Blocked sites show guidance panel
+  return blockedBody(w);
+}
+
+function blockedBody(w) {
+  const note = w.loginNote ? `<p>${esc(w.loginNote)}</p>` : '';
+  return `<div class="blocked-notice">
+    <div class="blocked-icon">${w.icon}</div>
+    <h3>${esc(w.name)}</h3>
+    <p>${esc(w.url)}</p>
+    <p style="margin-top:4px;">このサービスはiframe埋め込みをブロックしています。<br>
+    下のボタンで新しいタブを開いてログインしてください。</p>
+    ${note}
+    <button class="btn-open-tab" onclick="openInTab('${w.id}')">
+      <span>🔗</span> 新しいタブで開く
+    </button>
+    <button class="btn-open-tab secondary" onclick="markLoggedIn('${w.id}')">
+      ✅ ログイン済みとしてマーク
+    </button>
   </div>`;
 }
 
-// =========================================================
-// WINDOW MANAGEMENT
-// =========================================================
-function openAddModal() {
-  if (state.windows.length >= MAX_WINDOWS) {
-    toast('最大6ウィンドウまでです', 'err');
-    return;
-  }
-  pendingProvider = null;
-  document.querySelectorAll('.p-option').forEach(el => el.classList.remove('sel'));
-  document.getElementById('modelGroup').style.display = 'none';
-  document.getElementById('sysPromptGroup').style.display = 'none';
-  document.getElementById('winNameGroup').style.display = 'none';
-  document.getElementById('customEndpointGroup').style.display = 'none';
-  document.getElementById('modalSysPrompt').value = '';
-  document.getElementById('modalWinName').value = '';
-  document.getElementById('addModal').style.display = 'flex';
+function updatePaneHeader(w) {
+  const ps = el('pstatus-' + w.id);
+  if (!ps) return;
+  ps.className = 'pane-status' + (w.loginStatus === 'logged-in' ? ' ok' : '');
+  ps.textContent = w.loginStatus === 'logged-in' ? '✅ ログイン済' : '⚪ 未ログイン';
 }
 
-function pickProvider(p) {
-  pendingProvider = p;
-  document.querySelectorAll('.p-option').forEach(el => el.classList.remove('sel'));
-  document.getElementById('po-' + p).classList.add('sel');
+function renderTargetRow() {
+  const row = el('targetRow');
+  row.innerHTML = '<span style="font-size:12px;color:var(--text3);align-self:center;">送信先：</span>';
+  state.windows.forEach(w => {
+    const chip = document.createElement('label');
+    chip.className = 'target-chip' + (w.checked !== false ? ' checked' : '');
+    chip.innerHTML = `<input type="checkbox" ${w.checked !== false ? 'checked' : ''} onchange="toggleTarget('${w.id}',this.checked)">
+      ${w.icon} ${esc(w.name)}`;
+    row.appendChild(chip);
+  });
 
-  const models = MODELS[p];
-  const modelSel = document.getElementById('modalModel');
-  if (models.length) {
-    modelSel.innerHTML = models.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
-    document.getElementById('modelGroup').style.display = 'block';
-  } else if (p === 'ollama') {
-    modelSel.innerHTML = MODELS.ollama.length
-      ? MODELS.ollama.map(m => `<option value="${m.id}">${m.label}</option>`).join('')
-      : '<option value="">モデル名を入力してください</option>';
-    document.getElementById('modelGroup').style.display = 'block';
-  } else {
-    document.getElementById('modelGroup').style.display = 'none';
+  if (state.windows.length === 0) {
+    row.innerHTML += '<span style="font-size:12px;color:var(--text3);">— AIを追加してください</span>';
   }
+}
 
-  document.getElementById('customEndpointGroup').style.display =
-    (p === 'ollama' || p === 'openai_compat') ? 'block' : 'none';
+// ─────────────────────────────────────────────
+// WINDOW MANAGEMENT
+// ─────────────────────────────────────────────
+let pendingSvc = null;
 
-  if (p === 'ollama') document.getElementById('customEndpoint').value = 'http://localhost:11434';
-  if (p === 'openai_compat') document.getElementById('customEndpoint').value = '';
+function buildServiceGrid() {
+  const grid = el('serviceGrid');
+  grid.innerHTML = SERVICES.map(s => `
+    <div class="svc-card" id="scard-${s.id}" onclick="pickService('${s.id}')">
+      <div class="svc-icon">${s.icon}</div>
+      <div class="svc-name">${esc(s.name)}</div>
+      <div class="svc-url">${s.id === 'custom' ? 'カスタムURL' : s.url.replace('https://', '')}</div>
+    </div>`).join('');
+}
 
-  document.getElementById('sysPromptGroup').style.display = 'block';
-  document.getElementById('winNameGroup').style.display = 'block';
+function openAddModal() {
+  if (state.windows.length >= MAX_WIN) { toast('最大6ウィンドウです', 'err'); return; }
+  pendingSvc = null;
+  el('serviceGrid').querySelectorAll('.svc-card').forEach(c => c.classList.remove('sel'));
+  el('customUrlGroup').style.display = 'none';
+  el('customNameGroup').style.display = 'none';
+  el('customUrl').value = '';
+  el('customName').value = '';
+  el('addModal').style.display = 'flex';
+}
+
+function pickService(id) {
+  pendingSvc = id;
+  el('serviceGrid').querySelectorAll('.svc-card').forEach(c => c.classList.remove('sel'));
+  el('scard-' + id).classList.add('sel');
+  el('customUrlGroup').style.display = id === 'custom' ? 'block' : 'none';
+  el('customNameGroup').style.display = id === 'custom' ? 'block' : 'none';
 }
 
 function addWindow() {
-  if (!pendingProvider) { toast('プロバイダーを選択してください', 'err'); return; }
+  if (!pendingSvc) { toast('サービスを選択してください', 'err'); return; }
 
-  const model  = document.getElementById('modalModel').value || MODELS[pendingProvider][0]?.id || 'default';
-  const sys    = document.getElementById('modalSysPrompt').value.trim();
-  const name   = document.getElementById('modalWinName').value.trim()
-                 || `${PINFO[pendingProvider].name} ${state.windows.length + 1}`;
-  const endpoint = document.getElementById('customEndpoint').value.trim();
+  let svc = SERVICES.find(s => s.id === pendingSvc);
+  if (!svc) return;
 
-  if (state.windows.length >= MAX_WINDOWS) { toast('最大6ウィンドウまでです', 'err'); return; }
+  if (pendingSvc === 'custom') {
+    const url  = el('customUrl').value.trim();
+    const name = el('customName').value.trim();
+    if (!url)  { toast('URLを入力してください', 'err'); return; }
+    if (!name) { toast('表示名を入力してください', 'err'); return; }
+    svc = { ...svc, url, name };
+  }
+
+  // Prevent duplicate service
+  const dup = state.windows.find(w => w.serviceId === pendingSvc && pendingSvc !== 'custom');
+  if (dup) { toast(`${svc.name}はすでに追加済みです`, 'err'); return; }
 
   const id = 'w' + Date.now();
-  state.windows.push({ id, provider: pendingProvider, model, name, systemPrompt: sys, messages: [], endpoint });
+  state.windows.push({
+    id,
+    serviceId: svc.id,
+    name: svc.name,
+    icon: svc.icon,
+    color: svc.color,
+    url: svc.url,
+    queryParam: svc.queryParam,
+    blocked: svc.blocked,
+    loginNote: svc.loginNote,
+    checked: true,
+    loginStatus: 'unknown',
+  });
+
+  if (!state.activeTab) state.activeTab = id;
   closeModal('addModal');
   save();
   render();
-  toast(`「${name}」を追加しました`, 'ok');
+  toast(`${svc.name}を追加しました`, 'ok');
 }
 
 function removeWindow(id) {
   state.windows = state.windows.filter(w => w.id !== id);
-  delete busy[id];
-  save();
-  render();
+  if (state.activeTab === id) state.activeTab = state.windows[0]?.id || null;
+  save(); render();
 }
 
-function clearWindow(id) {
-  if (!confirm('このウィンドウの会話をクリアしますか？')) return;
+function switchTab(id) {
+  state.activeTab = id;
+  save(); render();
+}
+
+function toggleTarget(id, checked) {
+  const w = state.windows.find(w => w.id === id);
+  if (w) { w.checked = checked; save(); }
+  const chip = event.target.closest('.target-chip');
+  if (chip) chip.classList.toggle('checked', checked);
+}
+
+function markLoggedIn(id) {
   const w = state.windows.find(w => w.id === id);
   if (!w) return;
-  w.messages = [];
+  w.loginStatus = w.loginStatus === 'logged-in' ? 'unknown' : 'logged-in';
   save();
-  const msgs = document.getElementById('msgs-' + id);
-  if (msgs) {
-    const info = PINFO[w.provider];
-    msgs.innerHTML = `<div class="empty-win"><div class="e-icon">${info.emoji}</div><div>${info.name} · ${w.model}</div></div>`;
+  renderTabs();
+  updatePaneHeader(w);
+
+  // Update blocked notice button text
+  const body = el('pbody-' + id);
+  if (body) {
+    const btn = body.querySelector('.btn-open-tab.secondary');
+    if (btn) btn.textContent = w.loginStatus === 'logged-in' ? '🔄 ログイン解除' : '✅ ログイン済みとしてマーク';
+  }
+  toast(w.loginStatus === 'logged-in' ? `${w.name}：ログイン済みとしてマークしました` : `${w.name}：ログイン解除しました`, 'ok');
+}
+
+function openInTab(id) {
+  const w = state.windows.find(w => w.id === id);
+  if (!w || !w.url) return;
+
+  // Try to inject query if supported
+  const text = el('sharedInput').value.trim();
+  let url = w.url;
+  if (text && w.queryParam) {
+    url += (url.includes('?') ? '&' : '?') + `${w.queryParam}=${encodeURIComponent(text)}`;
+  }
+  window.open(url, `aihub_${id}`);
+}
+
+// ─────────────────────────────────────────────
+// IFRAME EVENTS
+// ─────────────────────────────────────────────
+function iframeLoaded(id) {
+  // Mark as accessible (can't verify cross-origin content)
+  const w = state.windows.find(w => w.id === id);
+  if (w && w.loginStatus === 'unknown') {
+    // Suggest marking as logged in
+  }
+}
+function iframeError(id) {
+  const body = el('pbody-' + id);
+  const iframe = el('iframe-' + id);
+  const w = state.windows.find(w => w.id === id);
+  if (body && iframe && w) {
+    iframe.remove();
+    const div = document.createElement('div');
+    div.innerHTML = blockedBody(w);
+    body.insertBefore(div.firstElementChild, body.firstChild);
   }
 }
 
-function changeModel(id, model) {
-  const w = state.windows.find(w => w.id === id);
-  if (!w) return;
-  w.model = model;
-  save();
-}
-
-function exportWindow(id) {
-  const w = state.windows.find(w => w.id === id);
-  if (!w) return;
-  const text = w.messages.map(m =>
-    `[${m.role === 'user' ? 'You' : 'AI'}] ${new Date(m.ts).toLocaleString('ja-JP')}\n${m.content}`
-  ).join('\n\n---\n\n');
-  const blob = new Blob([text], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${w.name}_${new Date().toISOString().slice(0,10)}.txt`;
-  a.click();
-}
-
-function updateWinCount() {
-  document.getElementById('winCount').textContent = state.windows.length;
-}
-
-// =========================================================
-// SENDING
-// =========================================================
+// ─────────────────────────────────────────────
+// SEND TO ALL
+// ─────────────────────────────────────────────
 function sharedKeyDown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendToAll(); }
 }
-function winKeyDown(e, id) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendToWindow(id); }
-}
 
 async function sendToAll() {
-  const input = document.getElementById('sharedInput');
-  const text = input.value.trim();
-  if (!text || state.windows.length === 0) return;
-  input.value = '';
-  input.style.height = 'auto';
-  document.getElementById('btnSendAll').disabled = true;
+  const text = el('sharedInput').value.trim();
+  if (!text) { toast('メッセージを入力してください', 'err'); return; }
 
-  await Promise.allSettled(state.windows.map(w => doSend(w.id, text)));
-  document.getElementById('btnSendAll').disabled = false;
-}
+  const targets = state.windows.filter(w => w.checked !== false);
+  if (targets.length === 0) { toast('送信先のAIを選択してください', 'err'); return; }
 
-async function sendToWindow(id) {
-  const input = document.getElementById('winput-' + id);
-  if (!input) return;
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.style.height = 'auto';
-  await doSend(id, text);
-}
-
-async function doSend(id, text) {
-  if (busy[id]) return;
-  const w = state.windows.find(w => w.id === id);
-  if (!w) return;
-
-  busy[id] = true;
-  setBusy(id, true);
-
-  // Add user message
-  const userMsg = { id: 'm'+Date.now()+Math.random(), role:'user', content:text, ts:Date.now() };
-  w.messages.push(userMsg);
-  appendMsg(id, userMsg, w);
-  clearEmptyState(id, w);
-  save();
-
-  // Show thinking
-  showThinking(id, w);
-
+  // 1. Copy to clipboard
+  let copied = false;
   try {
-    const reply = await callAPI(w);
-    removeThinking(id);
-    const aMsg = { id: 'm'+Date.now()+Math.random(), role:'assistant', content:reply, ts:Date.now() };
-    w.messages.push(aMsg);
-    appendMsg(id, aMsg, w);
-    save();
-  } catch(err) {
-    removeThinking(id);
-    const errMsg = { id: 'm'+Date.now()+Math.random(), role:'assistant', content:'❌ ' + err.message, ts:Date.now(), error:true };
-    w.messages.push(errMsg);
-    appendMsg(id, errMsg, w);
-    save();
-  } finally {
-    busy[id] = false;
-    setBusy(id, false);
+    await navigator.clipboard.writeText(text);
+    copied = true;
+  } catch(e) {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    copied = document.execCommand('copy');
+    ta.remove();
   }
-}
 
-function clearEmptyState(id, w) {
-  const msgs = document.getElementById('msgs-' + id);
-  if (msgs && msgs.querySelector('.empty-win')) {
-    msgs.innerHTML = '';
-  }
-}
+  // 2. Try iframe injection (will only work for same-origin / non-blocked sites)
+  let injected = 0;
+  for (const w of targets) {
+    const iframe = el('iframe-' + w.id);
+    if (iframe) {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (doc) {
+          // Try common input selectors
+          const selectors = [
+            'textarea[placeholder*="message" i]',
+            'textarea[placeholder*="メッセージ" i]',
+            'textarea[placeholder*="Ask" i]',
+            'textarea[placeholder*="Search" i]',
+            '[contenteditable="true"]',
+            'textarea:not([readonly])',
+            'input[type="text"]:not([readonly])',
+          ];
+          let injectedHere = false;
+          for (const sel of selectors) {
+            const inp = doc.querySelector(sel);
+            if (inp) {
+              inp.focus();
+              inp.value = text;
+              inp.dispatchEvent(new Event('input', { bubbles: true }));
+              inp.dispatchEvent(new Event('change', { bubbles: true }));
+              injectedHere = true;
+              break;
+            }
+          }
+          if (injectedHere) injected++;
+        }
+      } catch(e) {
+        // Cross-origin — expected for most AI sites
+      }
 
-function appendMsg(id, m, w) {
-  const msgs = document.getElementById('msgs-' + id);
-  if (!msgs) return;
-  const div = document.createElement('div');
-  div.innerHTML = buildMsg(m, w);
-  msgs.appendChild(div.firstElementChild);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showThinking(id, w) {
-  const msgs = document.getElementById('msgs-' + id);
-  if (!msgs) return;
-  const info = PINFO[w.provider];
-  const div = document.createElement('div');
-  div.id = 'thinking-' + id;
-  div.className = 'msg assistant';
-  div.innerHTML = `
-    <div class="msg-avatar" style="background:${info.color}22">${info.emoji}</div>
-    <div class="thinking-dots"><span></span><span></span><span></span></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function removeThinking(id) {
-  const el = document.getElementById('thinking-' + id);
-  if (el) el.remove();
-}
-
-function setBusy(id, b) {
-  const btn = document.getElementById('wsend-' + id);
-  const inp = document.getElementById('winput-' + id);
-  if (btn) btn.disabled = b;
-  if (inp) inp.disabled = b;
-}
-
-// =========================================================
-// API CALLS
-// =========================================================
-async function callAPI(w) {
-  switch(w.provider) {
-    case 'openai':       return callOpenAI(w);
-    case 'anthropic':    return callAnthropic(w);
-    case 'gemini':       return callGemini(w);
-    case 'ollama':       return callOllama(w);
-    case 'grok':         return callGrok(w);
-    case 'openai_compat':return callOpenAICompat(w);
-    default: throw new Error('Unknown provider');
-  }
-}
-
-async function callOpenAI(w) {
-  const key = state.keys.openai;
-  if (!key) throw new Error('OpenAI APIキーが未設定です (設定 ⚙️ から追加)');
-  const msgs = buildOpenAIMsgs(w);
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+key },
-    body: JSON.stringify({ model:w.model, messages:msgs, max_tokens:4096 })
-  });
-  if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error('OpenAI: ' + (e.error?.message||res.statusText)); }
-  const d = await res.json();
-  return d.choices[0].message.content;
-}
-
-async function callAnthropic(w) {
-  const key = state.keys.anthropic;
-  if (!key) throw new Error('Anthropic APIキーが未設定です (設定 ⚙️ から追加)');
-  const messages = w.messages.slice(-30).map(m => ({ role:m.role, content:m.content }));
-  const body = { model:w.model, max_tokens:4096, messages };
-  if (w.systemPrompt) body.system = w.systemPrompt;
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':key,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error('Anthropic: ' + (e.error?.message||res.statusText)); }
-  const d = await res.json();
-  return d.content[0].text;
-}
-
-async function callGemini(w) {
-  const key = state.keys.gemini;
-  if (!key) throw new Error('Gemini APIキーが未設定です (設定 ⚙️ から追加)');
-  const contents = [];
-  if (w.systemPrompt) {
-    contents.push({ role:'user', parts:[{text:w.systemPrompt}] });
-    contents.push({ role:'model', parts:[{text:'はい、承知しました。'}] });
-  }
-  for (const m of w.messages.slice(-30)) {
-    contents.push({ role: m.role==='user'?'user':'model', parts:[{text:m.content}] });
-  }
-  const modelId = `models/${w.model}`;
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/${modelId}:generateContent?key=${key}`,
-    {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ contents, generationConfig:{ maxOutputTokens:4096, temperature:0.7 } })
+      // Flash sync overlay
+      flashSync(w.id);
     }
-  );
-  if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error('Gemini: ' + (e.error?.message||res.statusText)); }
-  const d = await res.json();
-  if (!d.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error('Gemini: 応答が空です');
-  return d.candidates[0].content.parts[0].text;
+
+    // 3. Open in tab with query param if supported
+    if (w.queryParam && w.url) {
+      const url = w.url + (w.url.includes('?') ? '&' : '?') + `${w.queryParam}=${encodeURIComponent(text)}`;
+      window.open(url, `aihub_${w.id}`);
+    } else if (!el('iframe-' + w.id)) {
+      // Blocked sites: open tab
+      window.open(w.url, `aihub_${w.id}`);
+    }
+  }
+
+  // 4. Show result banner
+  if (copied) {
+    showClipBanner();
+    const msg = injected > 0
+      ? `📋 ${injected}個のAIに自動入力 + クリップボードにコピー済み`
+      : `📋 クリップボードにコピーしました — 各AIタブで Ctrl+V で貼り付けてください`;
+    toast(msg, 'info');
+  } else {
+    toast('クリップボードへのコピーに失敗しました。手動でコピーしてください。', 'err');
+  }
 }
 
-async function callOllama(w) {
-  const base = w.endpoint || 'http://localhost:11434';
-  const msgs = buildOpenAIMsgs(w);
-  const res = await fetch(`${base}/api/chat`, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ model:w.model, messages:msgs, stream:false })
-  }).catch(() => { throw new Error('Ollamaに接続できません。Ollamaが起動しているか確認してください。'); });
-  if (!res.ok) throw new Error('Ollama: ' + res.statusText);
-  const d = await res.json();
-  return d.message.content;
+function flashSync(id) {
+  const overlay = el('sync-' + id);
+  if (!overlay) return;
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 1800);
 }
 
-async function callGrok(w) {
-  const key = state.keys.grok;
-  if (!key) throw new Error('Grok APIキーが未設定です (設定 ⚙️ から追加)');
-  const msgs = buildOpenAIMsgs(w);
-  const res = await fetch('https://api.x.ai/v1/chat/completions', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+key },
-    body: JSON.stringify({ model:w.model, messages:msgs, max_tokens:4096 })
-  });
-  if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error('Grok: ' + (e.error?.message||res.statusText)); }
-  const d = await res.json();
-  return d.choices[0].message.content;
+function showClipBanner() {
+  const b = el('clipBanner');
+  b.classList.add('show');
+  setTimeout(() => b.classList.remove('show'), 3500);
 }
 
-async function callOpenAICompat(w) {
-  const base = (w.endpoint || '').replace(/\/$/, '');
-  if (!base) throw new Error('エンドポイントURLが設定されていません');
-  const msgs = buildOpenAIMsgs(w);
-  const res = await fetch(`${base}/v1/chat/completions`, {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ model:w.model, messages:msgs })
-  }).catch(() => { throw new Error('エンドポイントに接続できません: ' + base); });
-  if (!res.ok) throw new Error('カスタムAPI: ' + res.statusText);
-  const d = await res.json();
-  return d.choices[0].message.content;
-}
-
-function buildOpenAIMsgs(w) {
-  const msgs = [];
-  if (w.systemPrompt) msgs.push({ role:'system', content:w.systemPrompt });
-  msgs.push(...w.messages.slice(-30).map(m => ({ role:m.role, content:m.content })));
-  return msgs;
-}
-
-// =========================================================
-// OLLAMA MODEL DISCOVERY
-// =========================================================
-async function fetchOllamaModels() {
-  try {
-    const res = await fetch('http://localhost:11434/api/tags', { signal:AbortSignal.timeout(2000) });
-    if (!res.ok) return;
-    const d = await res.json();
-    MODELS.ollama = (d.models||[]).map(m => ({ id:m.name, label:m.name }));
-  } catch(e) {}
-}
-
-// =========================================================
-// SETTINGS
-// =========================================================
-function openSettings() {
-  document.getElementById('key-openai').value    = state.keys.openai    || '';
-  document.getElementById('key-anthropic').value = state.keys.anthropic || '';
-  document.getElementById('key-gemini').value    = state.keys.gemini    || '';
-  document.getElementById('key-grok').value      = state.keys.grok      || '';
-  document.getElementById('settingsModal').style.display = 'flex';
-  applyTheme();
-}
-
-function saveKey(provider, val) {
-  state.keys[provider] = val;
-  save();
-}
-
-function togglePwd(id) {
-  const el = document.getElementById(id);
-  el.type = el.type === 'password' ? 'text' : 'password';
-}
-
-function exportAll() {
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `aihub-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `aihub-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
-
 function importData() {
   const inp = document.createElement('input');
   inp.type = 'file'; inp.accept = '.json';
   inp.onchange = async e => {
     try {
-      const text = await e.target.files[0].text();
-      const d = JSON.parse(text);
-      if (d.windows) { state.windows = d.windows; state.keys = {...state.keys, ...(d.keys||{})}; save(); render(); toast('インポートしました', 'ok'); }
+      const d = JSON.parse(await e.target.files[0].text());
+      if (d.windows) { Object.assign(state, d); save(); render(); toast('インポートしました', 'ok'); }
       else toast('無効なファイルです', 'err');
-    } catch(e) { toast('インポート失敗: ' + e.message, 'err'); }
+    } catch(e) { toast('インポート失敗', 'err'); }
   };
   inp.click();
 }
-
 function clearAll() {
-  if (!confirm('全ての会話とウィンドウを削除しますか？')) return;
-  state.windows = [];
-  save(); render();
-  closeModal('settingsModal');
+  if (!confirm('全てのウィンドウと設定を削除しますか？')) return;
+  state.windows = []; state.activeTab = null;
+  save(); render(); closeModal('settingsModal');
   toast('全データを消去しました', 'ok');
 }
 
-// =========================================================
-// COPY
-// =========================================================
-function copyMsg(wid, mid) {
-  const w = state.windows.find(w => w.id === wid);
-  if (!w) return;
-  const m = w.messages.find(m => m.id === mid);
-  if (!m) return;
-  navigator.clipboard.writeText(m.content).then(() => toast('コピーしました', 'ok'));
+// ─────────────────────────────────────────────
+// MODALS
+// ─────────────────────────────────────────────
+function openSettings() {
+  const gtb = el('gridToggleBtn');
+  if (gtb) gtb.textContent = state.gridMode ? 'オン' : 'オフ';
+  el('settingsModal').style.display = 'flex';
+  applyTheme();
 }
-
-// =========================================================
-// MODAL HELPERS
-// =========================================================
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function openHelp() { el('helpModal').style.display = 'flex'; }
+function closeModal(id) { el(id).style.display = 'none'; }
 function overlayClose(e, id) { if (e.target.classList.contains('overlay')) closeModal(id); }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.overlay').forEach(el => el.style.display='none');
+  if (e.key === 'Escape') document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
 });
 
-// =========================================================
+// ─────────────────────────────────────────────
 // UTILITY
-// =========================================================
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 150) + 'px';
-}
-
+// ─────────────────────────────────────────────
+function el(id) { return document.getElementById(id); }
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function toast(msg, type='ok') {
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 300); }, 2800);
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 130) + 'px';
 }
-
-// =========================================================
-// MARKDOWN
-// =========================================================
-function mdToHtml(text) {
-  // Fenced code blocks
-  text = text.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
-    `<pre><code class="lang-${lang||''}">${esc(code.trim())}</code></pre>`);
-  // Inline code
-  text = text.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-  // Tables (simple)
-  text = text.replace(/^\|(.+)\|\s*\n\|[-| :]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, hdr, rows) => {
-    const ths = hdr.split('|').filter(s=>s.trim()).map(h=>`<th>${esc(h.trim())}</th>`).join('');
-    const trs = rows.trim().split('\n').map(row => {
-      const tds = row.split('|').filter(s=>s.trim()).map(c=>`<td>${esc(c.trim())}</td>`).join('');
-      return `<tr>${tds}</tr>`;
-    }).join('');
-    return `<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
-  });
-  // Bold & italic
-  text = text.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
-  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
-  // Headers
-  text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-  text = text.replace(/^## (.+)$/gm,  '<h2>$1</h2>');
-  text = text.replace(/^# (.+)$/gm,   '<h1>$1</h1>');
-  // Lists
-  text = text.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
-  text = text.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
-  text = text.replace(/((?:<li>.*<\/li>\n?)+)/g, s => `<ul>${s}</ul>`);
-  // Blockquotes
-  text = text.replace(/^> (.+)$/gm, '<blockquote style="border-left:3px solid var(--border2);padding-left:10px;color:var(--text2);margin:4px 0;">$1</blockquote>');
-  // Horizontal rule
-  text = text.replace(/^---$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">');
-  // Paragraphs
-  const parts = text.split(/\n\n+/);
-  text = parts.map(p => {
-    if (/^<(h[1-3]|ul|ol|pre|table|blockquote|hr)/.test(p.trim())) return p;
-    return `<p>${p.replace(/\n/g,'<br>')}</p>`;
-  }).join('');
-  return text;
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3200);
 }
 </script>
 </body>
